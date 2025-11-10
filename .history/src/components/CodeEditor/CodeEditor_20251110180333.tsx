@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Editor from '@monaco-editor/react';
 import { useStore } from '../../store/useStore';
-import { generateHTML, generateCSS, generateCompleteHTML } from '../../utils/codeGenerator';
+import { generateHTML, generateCSS } from '../../utils/codeGenerator';
 
 export const CodeEditor: React.FC = () => {
   const { elements } = useStore();
@@ -10,16 +10,29 @@ export const CodeEditor: React.FC = () => {
   const [cssCode, setCssCode] = useState('');
 
   useEffect(() => {
-    // HTML pur sans CSS
+    // Générer HTML pur (sans les balises style)
     setHtmlCode(generateHTML(elements));
-    // CSS pur
+    // Générer CSS pur
     setCssCode(generateCSS(elements));
   }, [elements]);
 
   const handleDownload = () => {
-    // Télécharger HTML complet avec CSS intégré
-    const completeHTML = generateCompleteHTML(elements);
-    const htmlBlob = new Blob([completeHTML], { type: 'text/html' });
+    // Créer le fichier HTML complet avec CSS intégré
+    const fullHTML = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projet Généré</title>
+    <style>${cssCode}</style>
+</head>
+<body>
+${htmlCode}
+</body>
+</html>`;
+
+    // Télécharger HTML complet
+    const htmlBlob = new Blob([fullHTML], { type: 'text/html' });
     const htmlUrl = URL.createObjectURL(htmlBlob);
     const htmlLink = document.createElement('a');
     htmlLink.href = htmlUrl;
@@ -34,7 +47,7 @@ export const CodeEditor: React.FC = () => {
     cssLink.download = 'styles.css';
     cssLink.click();
 
-    // Nettoyer
+    // Nettoyer les URLs
     setTimeout(() => {
       URL.revokeObjectURL(htmlUrl);
       URL.revokeObjectURL(cssUrl);
