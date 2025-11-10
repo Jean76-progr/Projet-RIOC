@@ -41,8 +41,7 @@ export const WidgetImporter: React.FC<Props> = ({ onClose, onImport }) => {
     return { htmlContent, cssContent };
   }, []);
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('handleFileChange déclenché', e.target.files);
+  const handleFileChange = async (e: { target: { files: FileList | null } } | React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -141,15 +140,11 @@ export const WidgetImporter: React.FC<Props> = ({ onClose, onImport }) => {
     if (files.length > 0) {
       const file = files[0];
       if (file.name.endsWith('.html') || file.name.endsWith('.css')) {
-        // Simuler un changement d'input file
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(file);
-        
-        if (fileInputRef.current) {
-          fileInputRef.current.files = dataTransfer.files;
-          const event = new Event('change', { bubbles: true });
-          fileInputRef.current.dispatchEvent(event);
-        }
+        // Créer un faux event pour réutiliser handleFileChange
+        const fakeEvent = {
+          target: { files: [file] as unknown as FileList }
+        };
+        handleFileChange(fakeEvent);
       } else {
         alert('❌ Veuillez importer un fichier HTML ou CSS');
       }
@@ -167,7 +162,7 @@ export const WidgetImporter: React.FC<Props> = ({ onClose, onImport }) => {
       >
         {/* Notification de succès */}
         {showSuccess && (
-          <div className="absolute top-4 right-4 px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg flex items-center gap-2 animate-bounce z-50">
+          <div className="absolute top-4 right-4 px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg flex items-center gap-2 animate-bounce z-1000">
             <Sparkles className="w-5 h-5" />
             <span className="font-medium">Widget importé avec succès !</span>
           </div>
@@ -193,7 +188,6 @@ export const WidgetImporter: React.FC<Props> = ({ onClose, onImport }) => {
             <div className="text-center">
               <input
                 ref={fileInputRef}
-                id="widget-file-input"
                 type="file"
                 accept=".html,.css"
                 onChange={handleFileChange}
@@ -201,7 +195,7 @@ export const WidgetImporter: React.FC<Props> = ({ onClose, onImport }) => {
               />
               
               <label
-                htmlFor="widget-file-input"
+                htmlFor="widget-file"
                 onDragOver={handleDragOver}
                 onDrop={handleDrop}
                 className={`mx-auto px-8 py-4 border-2 border-dashed border-green-500 rounded-xl transition-all flex items-center gap-3 cursor-pointer bg-white text-green-700 ${
