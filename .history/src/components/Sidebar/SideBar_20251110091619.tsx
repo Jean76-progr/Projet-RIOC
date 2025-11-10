@@ -148,15 +148,7 @@ export const Sidebar: React.FC = () => {
                   draggable
                   onDragStart={(e) => {
                     e.dataTransfer.setData('widgetId', widget.id);
-                    e.dataTransfer.setData(
-                      'defaultSize',
-                      JSON.stringify(
-                        (
-                          (widget as unknown as { defaultSize?: { width: number; height: number } })
-                            .defaultSize ?? { width: 200, height: 200 }
-                        )
-                      )
-                    );
+                    e.dataTransfer.setData('defaultSize', JSON.stringify(widget.defaultSize));
                     e.dataTransfer.setData('isBuiltIn', 'false');
                   }}
                   className="p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-all cursor-move border border-gray-200 hover:border-purple-400"

@@ -24,3 +24,17 @@ export class EasyFrontDB extends Dexie {
 }
 
 export const db = new EasyFrontDB();
+
+export interface Project {
+  id: string;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Widget {
+  id: string;
+  name: string;
+  category: string;
+  createdAt: Date;
+}

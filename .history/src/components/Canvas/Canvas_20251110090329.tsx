@@ -101,8 +101,11 @@ export const Canvas: React.FC = () => {
       {elements.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="text-center text-gray-400">
+            <div className="text-6xl mb-4">🎨</div>
+            <p className="text-xl font-medium">Glissez-déposez des composants ici</p>
             <p className="text-sm mt-2 flex items-center justify-center gap-2">
               <span className="inline-block w-3 h-3 bg-purple-500 rounded"></span>
+              Magnétisme activé automatiquement
             </p>
           </div>
         </div>

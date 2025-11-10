@@ -27,7 +27,7 @@ export interface Element {
   content: string;
   styles: React.CSSProperties;
   attributes: Record<string, string>;
-  children?: string[];
+  children?: string[]; // IDs des enfants
   parentId?: string;
 }
 
@@ -37,11 +37,6 @@ export interface Project {
   elements: Element[];
   createdAt: Date;
   updatedAt: Date;
-  metadata?: {
-    canvasSize?: Size;
-    gridSize?: number;
-    theme?: string;
-  };
 }
 
 export interface Widget {
@@ -50,6 +45,7 @@ export interface Widget {
   category: string;
   html: string;
   css: string;
+  thumbnail?: string;
   defaultSize: { width: number; height: number };
   createdAt: Date;
 }

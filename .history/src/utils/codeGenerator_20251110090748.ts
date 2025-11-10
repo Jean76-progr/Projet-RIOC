@@ -3,32 +3,27 @@ import type { Element } from '../types/element';
 export const generateHTML = (elements: Element[]): string => {
   const generateElementHTML = (element: Element, indent = 2): string => {
     const spaces = ' '.repeat(indent);
-    
-    // Construire les classes CSS
-    const classes = [`element-${element.id}`];
-    const classAttr = ` class="${classes.join(' ')}"`;
-    
     const attrs = Object.entries(element.attributes)
       .filter(([key]) => !key.startsWith('data-widget'))
       .map(([key, value]) => `${key}="${value}"`)
       .join(' ');
+    
+    const styleAttr = generateInlineStyles(element);
 
     // Si c'est un widget personnalisé
     if (element.attributes['data-widget-id']) {
-      return `${spaces}<div${classAttr}>\n${spaces}  ${element.content}\n${spaces}</div>`;
+      return `${spaces}<div${styleAttr}>\n${spaces}  ${element.content}\n${spaces}</div>`;
     }
 
     switch (element.type) {
       case 'input':
-        return `${spaces}<input${classAttr}${attrs ? ' ' + attrs : ''} />`;
+        return `${spaces}<input${attrs ? ' ' + attrs : ''}${styleAttr} />`;
       case 'img':
-        return `${spaces}<img${classAttr} src="${element.attributes.src || 'placeholder.jpg'}" alt="${element.content}" />`;
+        return `${spaces}<img src="${element.attributes.src || 'placeholder.jpg'}" alt="${element.content}"${styleAttr} />`;
       case 'textarea':
-        return `${spaces}<textarea${classAttr}${attrs ? ' ' + attrs : ''}>${element.content}</textarea>`;
-      case 'button':
-        return `${spaces}<button${classAttr}${attrs ? ' ' + attrs : ''}>${element.content}</button>`;
+        return `${spaces}<textarea${attrs ? ' ' + attrs : ''}${styleAttr}>${element.content}</textarea>`;
       default:
-        return `${spaces}<${element.type}${classAttr}${attrs ? ' ' + attrs : ''}>${element.content}</${element.type}>`;
+        return `${spaces}<${element.type}${attrs ? ' ' + attrs : ''}${styleAttr}>\n${spaces}  ${element.content}\n${spaces}</${element.type}>`;
     }
   };
 
@@ -45,36 +40,31 @@ ${generateCSS(elements)}
   </style>
 </head>
 <body>
-  <div class="canvas-container">
 ${htmlBody}
-  </div>
 </body>
 </html>`;
 };
 
 export const generateCSS = (elements: Element[]): string => {
   let css = `/* Généré par EasyFront le ${new Date().toLocaleString()} */\n\n`;
-  css += `* {\n  box-sizing: border-box;\n  margin: 0;\n  padding: 0;\n}\n\n`;
-  css += `body {\n  font-family: system-ui, -apple-system, sans-serif;\n}\n\n`;
-  css += `.canvas-container {\n  position: relative;\n  width: 100%;\n  min-height: 100vh;\n}\n\n`;
+  css += `body {\n  margin: 0;\n  padding: 0;\n  font-family: system-ui, -apple-system, sans-serif;\n}\n\n`;
 
-  elements.forEach((element) => {
+  elements.forEach((element, index) => {
     // Si c'est un widget, ajouter son CSS personnalisé
     if (element.attributes['data-widget-css']) {
       css += `/* Widget: ${element.attributes['data-widget-name']} */\n`;
       css += element.attributes['data-widget-css'] + '\n\n';
     }
 
-    // Générer le CSS pour chaque élément avec position RELATIVE
-    css += `/* ${element.type} - ${element.content.substring(0, 30)}${element.content.length > 30 ? '...' : ''} */\n`;
+    // Générer le CSS pour le positionnement
+    css += `/* Élément ${index + 1}: ${element.type} */\n`;
     css += `.element-${element.id} {\n`;
-    css += `  position: relative;\n`;
+    css += `  position: absolute;\n`;
     css += `  left: ${element.position.x}px;\n`;
     css += `  top: ${element.position.y}px;\n`;
     css += `  width: ${element.size.width}px;\n`;
     css += `  height: ${element.size.height}px;\n`;
     
-    // Ajouter les styles personnalisés
     Object.entries(element.styles).forEach(([key, value]) => {
       const cssKey = key.replace(/([A-Z])/g, '-$1').toLowerCase();
       css += `  ${cssKey}: ${value};\n`;
@@ -84,4 +74,24 @@ export const generateCSS = (elements: Element[]): string => {
   });
 
   return css;
+};
+
+const generateInlineStyles = (element: Element): string => {
+  const styles = {
+    position: 'absolute',
+    left: `${element.position.x}px`,
+    top: `${element.position.y}px`,
+    width: `${element.size.width}px`,
+    height: `${element.size.height}px`,
+    ...element.styles
+  };
+
+  const styleString = Object.entries(styles)
+    .map(([key, value]) => {
+      const cssKey = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+      return `${cssKey}:${value}`;
+    })
+    .join(';');
+
+  return styleString ? ` style="${styleString}"` : '';
 };

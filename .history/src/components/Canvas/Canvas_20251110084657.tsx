@@ -7,7 +7,7 @@ import { db } from '../../db/database';
 
 export const Canvas: React.FC = () => {
   const canvasRef = useRef<HTMLDivElement>(null);
-  const { elements, addElement, gridSize } = useStore();
+  const { elements, addElement, gridSize, showGrid, snapToGrid } = useStore();
 
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
@@ -26,10 +26,14 @@ export const Canvas: React.FC = () => {
       let x = e.clientX - rect.left - defaultSize.width / 2;
       let y = e.clientY - rect.top - defaultSize.height / 2;
 
-      // Magnétisme toujours actif
-      const snapped = snapPositionToGrid({ x, y }, gridSize);
-      x = Math.max(0, snapped.x);
-      y = Math.max(0, snapped.y);
+      if (snapToGrid) {
+        const snapped = snapPositionToGrid({ x, y }, gridSize);
+        x = snapped.x;
+        y = snapped.y;
+      }
+
+      x = Math.max(0, x);
+      y = Math.max(0, y);
 
       addElement({
         type: componentType,
@@ -51,10 +55,14 @@ export const Canvas: React.FC = () => {
       let x = e.clientX - rect.left - defaultSize.width / 2;
       let y = e.clientY - rect.top - defaultSize.height / 2;
 
-      // Magnétisme toujours actif
-      const snapped = snapPositionToGrid({ x, y }, gridSize);
-      x = Math.max(0, snapped.x);
-      y = Math.max(0, snapped.y);
+      if (snapToGrid) {
+        const snapped = snapPositionToGrid({ x, y }, gridSize);
+        x = snapped.x;
+        y = snapped.y;
+      }
+
+      x = Math.max(0, x);
+      y = Math.max(0, y);
 
       // Ajouter le widget comme élément personnalisé
       addElement({
@@ -77,14 +85,13 @@ export const Canvas: React.FC = () => {
     e.dataTransfer.dropEffect = 'copy';
   };
 
-  // Grille toujours visible
-  const gridBackground = {
+  const gridBackground = showGrid ? {
     backgroundImage: `
-      linear-gradient(to right, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 1px, transparent 1px)
+      linear-gradient(to right, rgba(0, 0, 0, 0.15) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.15) 1px, transparent 1px)
     `,
     backgroundSize: `${gridSize}px ${gridSize}px`
-  };
+  } : {};
 
   return (
     <div
@@ -101,8 +108,10 @@ export const Canvas: React.FC = () => {
       {elements.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="text-center text-gray-400">
-            <p className="text-sm mt-2 flex items-center justify-center gap-2">
-              <span className="inline-block w-3 h-3 bg-purple-500 rounded"></span>
+            <div className="text-6xl mb-4">🎨</div>
+            <p className="text-xl font-medium">Glissez-déposez des composants ici</p>
+            <p className="text-sm mt-2">
+              {snapToGrid ? '🧲 Magnétisme activé' : '🔓 Positionnement libre'}
             </p>
           </div>
         </div>

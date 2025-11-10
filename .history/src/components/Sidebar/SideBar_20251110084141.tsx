@@ -38,33 +38,13 @@ export const Sidebar: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'builtin' | 'custom'>('builtin');
 
   const loadWidgets = async () => {
-    try {
-      const allWidgets = await db.widgets.toArray();
-      console.log('Widgets chargés:', allWidgets);
-      setWidgets(allWidgets);
-    } catch (error) {
-      console.error('Erreur lors du chargement des widgets:', error);
-    }
+    const allWidgets = await db.widgets.toArray();
+    setWidgets(allWidgets);
   };
 
   useEffect(() => {
     loadWidgets();
   }, []);
-
-  const handleOpenImporter = () => {
-    console.log('Ouverture du modal d\'import');
-    setShowImporter(true);
-  };
-
-  const handleCloseImporter = () => {
-    console.log('Fermeture du modal d\'import');
-    setShowImporter(false);
-  };
-
-  const handleImportSuccess = () => {
-    console.log('Widget importé avec succès');
-    loadWidgets();
-  };
 
   return (
     <>
@@ -100,7 +80,7 @@ export const Sidebar: React.FC = () => {
           {/* Bouton importer */}
           {activeTab === 'custom' && (
             <button
-              onClick={handleOpenImporter}
+              onClick={() => setShowImporter(true)}
               className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
             >
               <Plus className="w-4 h-4" />
@@ -139,7 +119,7 @@ export const Sidebar: React.FC = () => {
               <div className="text-center py-12 text-gray-400">
                 <Package className="w-12 h-12 mx-auto mb-3 opacity-50" />
                 <p className="text-sm">Aucun widget personnalisé</p>
-                <p className="text-xs mt-1">Cliquez sur "Importer un widget"</p>
+                <p className="text-xs mt-1">Importez votre premier widget</p>
               </div>
             ) : (
               widgets.map((widget) => (
@@ -148,15 +128,7 @@ export const Sidebar: React.FC = () => {
                   draggable
                   onDragStart={(e) => {
                     e.dataTransfer.setData('widgetId', widget.id);
-                    e.dataTransfer.setData(
-                      'defaultSize',
-                      JSON.stringify(
-                        (
-                          (widget as unknown as { defaultSize?: { width: number; height: number } })
-                            .defaultSize ?? { width: 200, height: 200 }
-                        )
-                      )
-                    );
+                    e.dataTransfer.setData('defaultSize', JSON.stringify(widget.defaultSize));
                     e.dataTransfer.setData('isBuiltIn', 'false');
                   }}
                   className="p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-all cursor-move border border-gray-200 hover:border-purple-400"
@@ -175,11 +147,11 @@ export const Sidebar: React.FC = () => {
         </div>
       </div>
 
-      {/* Modal d'import - TOUJOURS RENDU */}
+      {/* Modal d'import */}
       {showImporter && (
         <WidgetImporter
-          onClose={handleCloseImporter}
-          onImport={handleImportSuccess}
+          onClose={() => setShowImporter(false)}
+          onImport={loadWidgets}
         />
       )}
     </>

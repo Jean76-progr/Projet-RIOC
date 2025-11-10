@@ -9,16 +9,12 @@ export class EasyFrontDB extends Dexie {
 
   constructor() {
     super('EasyFrontDB');
-    
-    // Version 1 : Projects seulement
     this.version(1).stores({
-      projects: 'id, name, createdAt, updatedAt'
+      projects: '++id, name, createdAt, updatedAt'
     });
-    
-    // Version 2 : Ajout de widgets
     this.version(2).stores({
-      projects: 'id, name, createdAt, updatedAt',
-      widgets: 'id, name, category, createdAt'
+      projects: '++id, name, createdAt, updatedAt',
+      widgets: '++id, name, category, createdAt'
     });
   }
 }
