@@ -49,8 +49,8 @@ export const Canvas: React.FC = () => {
   // Styles pour la grille
   const gridBackground = showGrid ? {
     backgroundImage: `
-      linear-gradient(to right, rgba(0, 0, 0, 0.25) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(0, 0, 0, 0.25) 1px, transparent 1px)
+      linear-gradient(to right, rgba(0, 0, 0, 0.15) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.15) 1px, transparent 1px)
     `,
     backgroundSize: `${gridSize}px ${gridSize}px`
   } : {};
