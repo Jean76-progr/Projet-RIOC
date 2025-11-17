@@ -308,14 +308,6 @@ Ce projet est sous licence **MIT**. Voir le fichier [LICENSE](LICENSE) pour plus
 
 ---
 
-## 👨‍💻 Auteur
-
-**Votre Nom**
-- GitHub : [@votre-username](https://github.com/votre-username)
-- Email : votre.email@example.com
-
----
-
 ## 🙏 Remerciements
 
 - [React](https://react.dev/) - Framework UI
@@ -324,13 +316,6 @@ Ce projet est sous licence **MIT**. Voir le fichier [LICENSE](LICENSE) pour plus
 - [Lucide](https://lucide.dev/) - Bibliothèque d'icônes
 - [Dexie.js](https://dexie.org/) - Wrapper IndexedDB
 
----
-
-## 📞 Support
-
-Pour toute question ou problème :
-- Ouvrez une **[issue](https://github.com/votre-username/easyfront/issues)**
-- Consultez la **[documentation](https://github.com/votre-username/easyfront/wiki)**
 
 ---
 
@@ -339,32 +324,8 @@ Pour toute question ou problème :
 ---
 
 <p align="center">
-  Fait avec ❤️ par <a href="https://github.com/votre-username">Votre Nom</a>
+  Fait avec ❤️ par <a href="https://github.com/UniLaSalle">UniLaSalle</a>
 </p>
 ```
 
 ---
-
-## 📸 Captures d'écran (optionnel)
-
-Si vous voulez ajouter des captures d'écran, créez un dossier `docs/images/` et ajoutez :
-
-```markdown
-## 📸 Aperçu
-
-### Interface principale
-![Interface principale](docs/images/screenshot-main.png)
-
-### Éditeur de code
-![Éditeur de code](docs/images/screenshot-editor.png)
-
-### Gestionnaire de projets
-![Gestionnaire de projets](docs/images/screenshot-projects.png)
-
-### Import de widgets
-![Import de widgets](docs/images/screenshot-widgets.png)
-```
-
----
-
-Ce README est complet, professionnel et prêt à être utilisé ! 🚀
