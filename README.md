@@ -1,4 +1,3 @@
-```markdown
 # EasyFront 🎨
 
 **EasyFront** est un éditeur visuel **drag-and-drop** pour créer des interfaces utilisateur HTML/CSS sans coder. Conçu pour simplifier la création de pages web, il génère automatiquement du code HTML/CSS propre et déployable.
@@ -64,7 +63,6 @@
 
 ### Étapes d'installation
 
-```bash
 # 1. Cloner le repository
 git clone https://github.com/votre-username/easyfront.git
 cd easyfront
@@ -77,17 +75,14 @@ npm run dev
 
 # 4. Ouvrir dans le navigateur
 # L'application sera accessible sur http://localhost:5173
-```
 
 ### Build pour production
 
-```bash
 # Créer un build optimisé
 npm run build
 
 # Prévisualiser le build
 npm run preview
-```
 
 ---
 
