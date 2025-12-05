@@ -9,10 +9,6 @@ import {
   Image as ImageIcon,
   Plus,
   Package,
-  Trash2,
-  Edit2,
-  X,
-  Check,
 } from 'lucide-react';
 import type { ElementType } from '../../types/element';
 import { db } from '../../db/database';
@@ -41,17 +37,15 @@ export const Sidebar: React.FC = () => {
   const { addElement } = useStore();
   const [widgets, setWidgets] = useState<Widget[]>([]);
   const [activeTab, setActiveTab] = useState<'builtin' | 'custom'>('builtin');
-  const [editingWidgetId, setEditingWidgetId] = useState<string | null>(null);
-  const [newWidgetName, setNewWidgetName] = useState<string>('');
-
-  // Refs pour les inputs
+  
+  // ✅ Deux refs séparées
   const imageInputRef = useRef<HTMLInputElement>(null);
   const widgetInputRef = useRef<HTMLInputElement>(null);
 
-  // Charger les widgets depuis IndexedDB
   const loadWidgets = async () => {
     try {
       const allWidgets = await db.widgets.toArray();
+      console.log('Widgets chargés:', allWidgets);
       setWidgets(allWidgets);
     } catch (error) {
       console.error('Erreur lors du chargement des widgets:', error);
@@ -62,13 +56,15 @@ export const Sidebar: React.FC = () => {
     loadWidgets();
   }, []);
 
-  // Gestion de l'import d'image
+  // ✅ Gestion de l'import d'image
   const handleSelectImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
     const reader = new FileReader();
     reader.onload = () => {
       const src = reader.result as string;
+
       try {
         addElement({
           type: 'img',
@@ -84,25 +80,34 @@ export const Sidebar: React.FC = () => {
         alert("❌ Erreur lors de l'import de l'image.");
       }
     };
+
     reader.readAsDataURL(file);
   };
 
-  // Gestion de l'import de widget
+  // ✅ Gestion de l'import de widget (MÊME PRINCIPE)
   const handleSelectWidget = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
     try {
       const text = await file.text();
+      
       if (file.name.endsWith('.html')) {
+        // Extraire CSS
         const styleMatch = text.match(/<style[^>]*>([\s\S]*?)<\/style>/);
         const cssContent = styleMatch ? styleMatch[1].trim() : '';
+        
+        // Extraire HTML du body
         const bodyMatch = text.match(/<body[^>]*>([\s\S]*?)<\/body>/);
         let htmlContent = bodyMatch ? bodyMatch[1].trim() : text;
+        
+        // Nettoyer
         htmlContent = htmlContent
           .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
           .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
           .trim();
-
+        
+        // Créer le widget
         const widget: Widget = {
           id: uuidv4(),
           name: file.name.replace('.html', '').replace(/[-_]/g, ' '),
@@ -110,10 +115,16 @@ export const Sidebar: React.FC = () => {
           html: htmlContent,
           css: cssContent,
           defaultSize: { width: 300, height: 200 },
-          createdAt: new Date(),
+          createdAt: new Date()
         };
+
+        // Sauvegarder dans IndexedDB
         await db.widgets.add(widget);
+        console.log('✅ Widget ajouté:', widget);
+        
+        // Recharger la liste
         await loadWidgets();
+        
         alert('✅ Widget importé avec succès !');
       } else {
         alert('⚠️ Veuillez sélectionner un fichier HTML');
@@ -122,39 +133,10 @@ export const Sidebar: React.FC = () => {
       console.error('Erreur lors de l\'importation du widget:', error);
       alert('❌ Erreur lors de l\'importation du widget');
     }
+
+    // Réinitialiser l'input
     if (widgetInputRef.current) {
       widgetInputRef.current.value = '';
-    }
-  };
-
-  // Supprimer un widget
-  const handleDeleteWidget = async (widgetId: string) => {
-    if (window.confirm('Voulez-vous vraiment supprimer ce widget ?')) {
-      try {
-        await db.widgets.delete(widgetId);
-        await loadWidgets();
-        alert('✅ Widget supprimé avec succès !');
-      } catch (error) {
-        console.error('Erreur lors de la suppression du widget:', error);
-        alert('❌ Erreur lors de la suppression du widget');
-      }
-    }
-  };
-
-  // Renommer un widget
-  const handleRenameWidget = async (widgetId: string) => {
-    if (!newWidgetName.trim()) {
-      alert('⚠️ Le nom ne peut pas être vide');
-      return;
-    }
-    try {
-      await db.widgets.update(widgetId, { name: newWidgetName });
-      await loadWidgets();
-      setEditingWidgetId(null);
-      alert('✅ Widget renommé avec succès !');
-    } catch (error) {
-      console.error('Erreur lors du renommage du widget:', error);
-      alert('❌ Erreur lors du renommage du widget');
     }
   };
 
@@ -164,6 +146,7 @@ export const Sidebar: React.FC = () => {
         {/* Header */}
         <div className="p-4 border-b border-gray-200">
           <h2 className="text-lg font-bold text-gray-800 mb-3">Composants</h2>
+
           {/* Tabs */}
           <div className="flex gap-2 mb-3">
             <button
@@ -187,7 +170,8 @@ export const Sidebar: React.FC = () => {
               Widgets ({widgets.length})
             </button>
           </div>
-          {/* Bouton importer widget */}
+
+          {/* ✅ Bouton importer widget - MÊME PRINCIPE QUE L'IMAGE */}
           {activeTab === 'custom' && (
             <button
               onClick={() => widgetInputRef.current?.click()}
@@ -198,6 +182,7 @@ export const Sidebar: React.FC = () => {
             </button>
           )}
         </div>
+
         {/* Liste des composants */}
         <div className="flex-1 overflow-y-auto p-4 space-y-2">
           {activeTab === 'builtin' ? (
@@ -252,66 +237,9 @@ export const Sidebar: React.FC = () => {
                   <div className="flex items-center gap-3">
                     <Package className="w-5 h-5 text-purple-600" />
                     <div className="flex-1 min-w-0">
-                      {editingWidgetId === widget.id ? (
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="text"
-                            value={newWidgetName}
-                            onChange={(e) => setNewWidgetName(e.target.value)}
-                            className="flex-1 text-sm border border-gray-300 rounded px-2 py-1"
-                            autoFocus
-                          />
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleRenameWidget(widget.id);
-                            }}
-                            className="text-green-600 hover:text-green-700"
-                          >
-                            <Check className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setEditingWidgetId(null);
-                            }}
-                            className="text-red-600 hover:text-red-700"
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
-                        </div>
-                      ) : (
-                        <>
-                          <p className="font-medium text-gray-700 text-sm truncate">{widget.name}</p>
-                          <p className="text-xs text-gray-500">{widget.category}</p>
-                        </>
-                      )}
+                      <p className="font-medium text-gray-700 text-sm truncate">{widget.name}</p>
+                      <p className="text-xs text-gray-500">{widget.category}</p>
                     </div>
-                    {editingWidgetId !== widget.id && (
-                      <div className="flex gap-1">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setEditingWidgetId(widget.id);
-                            setNewWidgetName(widget.name);
-                          }}
-                          className="text-blue-600 hover:text-blue-700"
-                          title="Renommer"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteWidget(widget.id);
-                          }}
-                          className="text-red-600 hover:text-red-700"
-                          title="Supprimer"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    )}
                   </div>
                 </div>
               ))
@@ -319,7 +247,8 @@ export const Sidebar: React.FC = () => {
           )}
         </div>
       </div>
-      {/* Input caché pour l'import d'image */}
+
+      {/* ✅ Input caché pour l'import d'image */}
       <input
         type="file"
         accept="image/*"
@@ -327,7 +256,8 @@ export const Sidebar: React.FC = () => {
         onChange={handleSelectImage}
         className="hidden"
       />
-      {/* Input caché pour l'import de widget HTML */}
+
+      {/* ✅ Input caché pour l'import de widget HTML */}
       <input
         type="file"
         accept=".html"

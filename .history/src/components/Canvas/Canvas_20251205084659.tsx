@@ -21,15 +21,7 @@ export const Canvas: React.FC = () => {
     if (isBuiltIn) {
       // ✅ Composant built-in
       const componentType = e.dataTransfer.getData('componentType') as ElementType;
-      let rawSize = e.dataTransfer.getData('defaultSize');
-
-      if (!rawSize) {
-        console.warn("⚠️ Aucun defaultSize trouvé, utilisation de valeurs par défaut.");
-        rawSize = JSON.stringify({ width: 300, height: 200 }); // fallback par défaut
-      }
-
-      const defaultSize = JSON.parse(rawSize);
-
+      const defaultSize = JSON.parse(e.dataTransfer.getData('defaultSize'));
       
       let x = e.clientX - rect.left - defaultSize.width / 2;
       let y = e.clientY - rect.top - defaultSize.height / 2;
@@ -62,15 +54,7 @@ export const Canvas: React.FC = () => {
           return;
         }
 
-        let rawSize = e.dataTransfer.getData('defaultSize');
-
-        if (!rawSize) {
-          console.warn("⚠️ Aucun defaultSize trouvé, utilisation de valeurs par défaut.");
-          rawSize = JSON.stringify({ width: 300, height: 200 }); // fallback par défaut
-        }
-
-        const defaultSize = JSON.parse(rawSize);
-
+        const defaultSize = JSON.parse(e.dataTransfer.getData('defaultSize'));
         
         let x = e.clientX - rect.left - defaultSize.width / 2;
         let y = e.clientY - rect.top - defaultSize.height / 2;

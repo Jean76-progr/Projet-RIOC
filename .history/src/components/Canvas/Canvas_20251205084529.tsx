@@ -21,15 +21,7 @@ export const Canvas: React.FC = () => {
     if (isBuiltIn) {
       // ✅ Composant built-in
       const componentType = e.dataTransfer.getData('componentType') as ElementType;
-      let rawSize = e.dataTransfer.getData('defaultSize');
-
-      if (!rawSize) {
-        console.warn("⚠️ Aucun defaultSize trouvé, utilisation de valeurs par défaut.");
-        rawSize = JSON.stringify({ width: 300, height: 200 }); // fallback par défaut
-      }
-
-      const defaultSize = JSON.parse(rawSize);
-
+      const defaultSize = JSON.parse(e.dataTransfer.getData('defaultSize'));
       
       let x = e.clientX - rect.left - defaultSize.width / 2;
       let y = e.clientY - rect.top - defaultSize.height / 2;
@@ -62,15 +54,7 @@ export const Canvas: React.FC = () => {
           return;
         }
 
-        let rawSize = e.dataTransfer.getData('defaultSize');
-
-        if (!rawSize) {
-          console.warn("⚠️ Aucun defaultSize trouvé, utilisation de valeurs par défaut.");
-          rawSize = JSON.stringify({ width: 300, height: 200 }); // fallback par défaut
-        }
-
-        const defaultSize = JSON.parse(rawSize);
-
+        const defaultSize = JSON.parse(e.dataTransfer.getData('defaultSize'));
         
         let x = e.clientX - rect.left - defaultSize.width / 2;
         let y = e.clientY - rect.top - defaultSize.height / 2;
@@ -128,6 +112,18 @@ export const Canvas: React.FC = () => {
         minHeight: '100%'
       }}
     >
+      {elements.length === 0 && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="text-center text-gray-400">
+            <div className="text-6xl mb-4">🎨</div>
+            <p className="text-xl font-medium">Glissez-déposez des composants ici</p>
+            <p className="text-sm mt-2 flex items-center justify-center gap-2">
+              <span className="inline-block w-3 h-3 bg-purple-500 rounded"></span>
+              Magnétisme activé automatiquement
+            </p>
+          </div>
+        </div>
+      )}
       
       {elements.map((element) => (
         <DraggableElement key={element.id} element={element} />
