@@ -41,7 +41,8 @@ export const WidgetImporter: React.FC<Props> = ({ onClose, onImport }) => {
     return { htmlContent, cssContent };
   }, []);
 
-  const handleFileChange = async (e: { target: { files: FileList | null } } | React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('handleFileChange déclenché', e.target.files);
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -77,7 +78,7 @@ export const WidgetImporter: React.FC<Props> = ({ onClose, onImport }) => {
       }
     } catch (error) {
       console.error('Erreur lors de la lecture du fichier:', error);
-      alert('❌ Erreur lors de la lecture du fichier');
+      alert('Erreur lors de la lecture du fichier');
     } finally {
       setIsImporting(false);
       // Reset l'input file pour permettre de re-sélectionner le même fichier
@@ -89,12 +90,12 @@ export const WidgetImporter: React.FC<Props> = ({ onClose, onImport }) => {
 
   const handleSave = async () => {
     if (!name.trim()) {
-      alert('⚠️ Veuillez entrer un nom pour le widget');
+      alert('Veuillez entrer un nom pour le widget');
       return;
     }
     
     if (!html.trim()) {
-      alert('⚠️ Veuillez entrer le code HTML du widget');
+      alert('Veuillez entrer le code HTML du widget');
       return;
     }
 
@@ -110,7 +111,7 @@ export const WidgetImporter: React.FC<Props> = ({ onClose, onImport }) => {
 
     try {
       await db.widgets.add(widget);
-      console.log('✅ Widget ajouté:', widget);
+      console.log('Widget ajouté:', widget);
       
       // Animation de succès
       setShowSuccess(true);
@@ -123,7 +124,7 @@ export const WidgetImporter: React.FC<Props> = ({ onClose, onImport }) => {
       
     } catch (error) {
       console.error('Erreur lors de l\'importation:', error);
-      alert('❌ Erreur lors de l\'importation du widget');
+      alert('Erreur lors de l\'importation du widget');
     }
   };
 
@@ -140,13 +141,17 @@ export const WidgetImporter: React.FC<Props> = ({ onClose, onImport }) => {
     if (files.length > 0) {
       const file = files[0];
       if (file.name.endsWith('.html') || file.name.endsWith('.css')) {
-        // Créer un faux event pour réutiliser handleFileChange
-        const fakeEvent = {
-          target: { files: [file] as unknown as FileList }
-        };
-        handleFileChange(fakeEvent);
+        // Simuler un changement d'input file
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        
+        if (fileInputRef.current) {
+          fileInputRef.current.files = dataTransfer.files;
+          const event = new Event('change', { bubbles: true });
+          fileInputRef.current.dispatchEvent(event);
+        }
       } else {
-        alert('❌ Veuillez importer un fichier HTML ou CSS');
+        alert('Veuillez importer un fichier HTML ou CSS');
       }
     }
   };
@@ -162,7 +167,7 @@ export const WidgetImporter: React.FC<Props> = ({ onClose, onImport }) => {
       >
         {/* Notification de succès */}
         {showSuccess && (
-          <div className="absolute top-4 right-4 px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg flex items-center gap-2 animate-bounce z-1000">
+          <div className="absolute top-4 right-4 px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg flex items-center gap-2 animate-bounce z-50">
             <Sparkles className="w-5 h-5" />
             <span className="font-medium">Widget importé avec succès !</span>
           </div>
@@ -188,6 +193,7 @@ export const WidgetImporter: React.FC<Props> = ({ onClose, onImport }) => {
             <div className="text-center">
               <input
                 ref={fileInputRef}
+                id="widget-file-input"
                 type="file"
                 accept=".html,.css"
                 onChange={handleFileChange}
@@ -195,7 +201,7 @@ export const WidgetImporter: React.FC<Props> = ({ onClose, onImport }) => {
               />
               
               <label
-                htmlFor="widget-file"
+                htmlFor="widget-file-input"
                 onDragOver={handleDragOver}
                 onDrop={handleDrop}
                 className={`mx-auto px-8 py-4 border-2 border-dashed border-green-500 rounded-xl transition-all flex items-center gap-3 cursor-pointer bg-white text-green-700 ${

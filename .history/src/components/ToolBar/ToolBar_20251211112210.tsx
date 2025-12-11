@@ -23,7 +23,7 @@ export const Toolbar: React.FC = () => {
 
   const handleSave = async () => {
     if (elements.length === 0) {
-      alert('⚠️ Aucun élément à sauvegarder. Ajoutez des composants au canvas d\'abord.');
+      alert('Aucun élément à sauvegarder. Ajoutez des composants au canvas d\'abord.');
       return;
     }
 
@@ -33,7 +33,7 @@ export const Toolbar: React.FC = () => {
     try {
       // Vérifier si l'API File System Access est supportée
       if (!('showSaveFilePicker' in window)) {
-        alert('❌ Votre navigateur ne supporte pas la sauvegarde de fichiers. Utilisez Chrome ou Edge.');
+        alert('Votre navigateur ne supporte pas la sauvegarde de fichiers. Utilisez Chrome ou Edge.');
         return;
       }
 
@@ -63,13 +63,13 @@ export const Toolbar: React.FC = () => {
         updatedAt: new Date()
       });
 
-      alert('✅ Projet sauvegardé avec succès !');
+      alert('Projet sauvegardé avec succès !');
     } catch (error: any) {
       if (error.name === 'AbortError') {
         return;
       }
       console.error('Erreur lors de la sauvegarde:', error);
-      alert('❌ Erreur lors de la sauvegarde du fichier');
+      alert('Erreur lors de la sauvegarde du fichier');
     }
   };
 

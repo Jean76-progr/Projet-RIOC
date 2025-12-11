@@ -78,7 +78,7 @@ export const WidgetImporter: React.FC<Props> = ({ onClose, onImport }) => {
       }
     } catch (error) {
       console.error('Erreur lors de la lecture du fichier:', error);
-      alert('❌ Erreur lors de la lecture du fichier');
+      alert('Erreur lors de la lecture du fichier');
     } finally {
       setIsImporting(false);
       // Reset l'input file pour permettre de re-sélectionner le même fichier
@@ -90,12 +90,12 @@ export const WidgetImporter: React.FC<Props> = ({ onClose, onImport }) => {
 
   const handleSave = async () => {
     if (!name.trim()) {
-      alert('⚠️ Veuillez entrer un nom pour le widget');
+      alert('Veuillez entrer un nom pour le widget');
       return;
     }
     
     if (!html.trim()) {
-      alert('⚠️ Veuillez entrer le code HTML du widget');
+      alert('Veuillez entrer le code HTML du widget');
       return;
     }
 
@@ -111,7 +111,7 @@ export const WidgetImporter: React.FC<Props> = ({ onClose, onImport }) => {
 
     try {
       await db.widgets.add(widget);
-      console.log('✅ Widget ajouté:', widget);
+      console.log('Widget ajouté:', widget);
       
       // Animation de succès
       setShowSuccess(true);
@@ -124,7 +124,7 @@ export const WidgetImporter: React.FC<Props> = ({ onClose, onImport }) => {
       
     } catch (error) {
       console.error('Erreur lors de l\'importation:', error);
-      alert('❌ Erreur lors de l\'importation du widget');
+      alert('Erreur lors de l\'importation du widget');
     }
   };
 
@@ -151,7 +151,7 @@ export const WidgetImporter: React.FC<Props> = ({ onClose, onImport }) => {
           fileInputRef.current.dispatchEvent(event);
         }
       } else {
-        alert('❌ Veuillez importer un fichier HTML ou CSS');
+        alert('Veuillez importer un fichier HTML ou CSS');
       }
     }
   };

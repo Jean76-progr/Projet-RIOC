@@ -38,7 +38,7 @@ export const ProjectManager: React.FC<Props> = ({ onClose }) => {
       clearCanvas();
       project.elements.forEach(el => addElement(el));
       onClose();
-      alert('✅ Projet chargé !');
+      alert('Projet chargé !');
     }
   };
 
@@ -46,11 +46,11 @@ export const ProjectManager: React.FC<Props> = ({ onClose }) => {
     if (confirm(`Supprimer définitivement le projet "${project.name}" ?`)) {
       try {
         await db.projects.delete(project.id);
-        alert('✅ Projet supprimé !');
+        alert('Projet supprimé !');
         loadProjects();
       } catch (error) {
         console.error('Erreur lors de la suppression:', error);
-        alert('❌ Erreur lors de la suppression');
+        alert('Erreur lors de la suppression');
       }
     }
   };

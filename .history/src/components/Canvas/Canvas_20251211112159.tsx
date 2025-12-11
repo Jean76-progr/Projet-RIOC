@@ -19,9 +19,16 @@ export const Canvas: React.FC = () => {
     const rect = canvasRef.current.getBoundingClientRect();
 
     if (isBuiltIn) {
-      // Composant built-in
       const componentType = e.dataTransfer.getData('componentType') as ElementType;
-      const defaultSize = JSON.parse(e.dataTransfer.getData('defaultSize'));
+      let rawSize = e.dataTransfer.getData('defaultSize');
+
+      if (!rawSize) {
+        console.warn("⚠️ Aucun defaultSize trouvé, utilisation de valeurs par défaut.");
+        rawSize = JSON.stringify({ width: 300, height: 200 }); // fallback par défaut
+      }
+
+      const defaultSize = JSON.parse(rawSize);
+
       
       let x = e.clientX - rect.left - defaultSize.width / 2;
       let y = e.clientY - rect.top - defaultSize.height / 2;
@@ -40,35 +47,55 @@ export const Canvas: React.FC = () => {
         attributes: getDefaultAttributes(componentType)
       });
     } else {
-      // Widget personnalisé
       const widgetId = e.dataTransfer.getData('widgetId');
-      const widget = await db.widgets.get(widgetId);
+      console.log('Drop widget ID:', widgetId);
       
-      if (!widget) return;
-
-      const defaultSize = JSON.parse(e.dataTransfer.getData('defaultSize'));
-      
-      let x = e.clientX - rect.left - defaultSize.width / 2;
-      let y = e.clientY - rect.top - defaultSize.height / 2;
-
-      // Magnétisme toujours actif
-      const snapped = snapPositionToGrid({ x, y }, gridSize);
-      x = Math.max(0, snapped.x);
-      y = Math.max(0, snapped.y);
-
-      // Ajouter le widget comme élément personnalisé
-      addElement({
-        type: 'div' as ElementType,
-        position: { x, y },
-        size: defaultSize,
-        content: widget.html,
-        styles: {},
-        attributes: {
-          'data-widget-id': widget.id,
-          'data-widget-name': widget.name,
-          'data-widget-css': widget.css
+      try {
+        const widget = await db.widgets.get(widgetId);
+        console.log('Widget trouvé:', widget);
+        
+        if (!widget) {
+          console.error('Widget non trouvé dans la base de données');
+          alert('Widget introuvable');
+          return;
         }
-      });
+
+        let rawSize = e.dataTransfer.getData('defaultSize');
+
+        if (!rawSize) {
+          console.warn("Aucun defaultSize trouvé, utilisation de valeurs par défaut.");
+          rawSize = JSON.stringify({ width: 300, height: 200 }); // fallback par défaut
+        }
+
+        const defaultSize = JSON.parse(rawSize);
+
+        
+        let x = e.clientX - rect.left - defaultSize.width / 2;
+        let y = e.clientY - rect.top - defaultSize.height / 2;
+
+        // Magnétisme toujours actif
+        const snapped = snapPositionToGrid({ x, y }, gridSize);
+        x = Math.max(0, snapped.x);
+        y = Math.max(0, snapped.y);
+
+        addElement({
+          type: 'div' as ElementType,
+          position: { x, y },
+          size: defaultSize,
+          content: widget.html,
+          styles: {},
+          attributes: {
+            'data-widget-id': widget.id,
+            'data-widget-name': widget.name,
+            'data-widget-css': widget.css
+          }
+        });
+
+        console.log('Widget ajouté au canvas');
+      } catch (error) {
+        console.error('Erreur lors du drop du widget:', error);
+        alert('Erreur lors de l\'ajout du widget');
+      }
     }
   };
 
@@ -98,15 +125,6 @@ export const Canvas: React.FC = () => {
         minHeight: '100%'
       }}
     >
-      {elements.length === 0 && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="text-center text-gray-400">
-            <p className="text-sm mt-2 flex items-center justify-center gap-2">
-              <span className="inline-block w-3 h-3 bg-purple-500 rounded"></span>
-            </p>
-          </div>
-        </div>
-      )}
       
       {elements.map((element) => (
         <DraggableElement key={element.id} element={element} />
