@@ -8,50 +8,59 @@ export const CodeEditor: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'html' | 'css'>('html');
   const [htmlCode, setHtmlCode] = useState('');
   const [cssCode, setCssCode] = useState('');
+  const [previewHtml, setPreviewHtml] = useState('');
 
   useEffect(() => {
     setHtmlCode(generateHTML(elements));
     setCssCode(generateCSS(elements));
   }, [elements]);
 
+  useEffect(() => {
+    const preview = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>${cssCode}</style>
+        </head>
+        <body>
+          ${htmlCode}
+        </body>
+      </html>
+    `;
+    setPreviewHtml(preview);
+  }, [htmlCode, cssCode]);
+
+  const handleEditorChange = (value: string | undefined) => {
+    if (activeTab === 'html' && value) {
+      setHtmlCode(value);
+    } else if (activeTab === 'css' && value) {
+      setCssCode(value);
+    }
+  };
+
   const handleDownload = () => {
-    const completeHTML = generateCompleteHTML(elements);
+    const completeHTML = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>${cssCode}</style>
+        </head>
+        <body>
+          ${htmlCode}
+        </body>
+      </html>
+    `;
     const htmlBlob = new Blob([completeHTML], { type: 'text/html' });
     const htmlUrl = URL.createObjectURL(htmlBlob);
     const htmlLink = document.createElement('a');
     htmlLink.href = htmlUrl;
     htmlLink.download = 'index.html';
     htmlLink.click();
-
-    const cssBlob = new Blob([cssCode], { type: 'text/css' });
-    const cssUrl = URL.createObjectURL(cssBlob);
-    const cssLink = document.createElement('a');
-    cssLink.href = cssUrl;
-    cssLink.download = 'styles.css';
-    cssLink.click();
-
-    setTimeout(() => {
-      URL.revokeObjectURL(htmlUrl);
-      URL.revokeObjectURL(cssUrl);
-    }, 100);
-  };
-
-  // Fonction pour ouvrir l'aperçu dans une nouvelle fenêtre
-  const handlePreview = () => {
-    const completeHTML = generateCompleteHTML(elements);
-    const previewWindow = window.open('', '_blank');
-    if (previewWindow) {
-      previewWindow.document.open();
-      previewWindow.document.write(completeHTML);
-      previewWindow.document.close();
-    } else {
-      alert("La fenêtre d'aperçu n'a pas pu s'ouvrir. Vérifiez les bloqueurs de pop-up.");
-    }
+    setTimeout(() => URL.revokeObjectURL(htmlUrl), 100);
   };
 
   return (
     <div className="h-full bg-gray-900 flex flex-col">
-      {/* Tabs */}
       <div className="flex bg-gray-800 border-b border-gray-700">
         <button
           onClick={() => setActiveTab('html')}
@@ -74,37 +83,38 @@ export const CodeEditor: React.FC = () => {
           CSS
         </button>
         <button
-          onClick={handlePreview}
-          className="px-6 py-3 bg-purple-600 text-white hover:bg-purple-700 transition-colors font-medium mr-2"
-          title="Aperçu dans une nouvelle fenêtre"
-        >
-          👁️ Aperçu
-        </button>
-        <button
           onClick={handleDownload}
-          className="px-6 py-3 bg-blue-600 text-white hover:bg-blue-700 transition-colors font-medium"
+          className="ml-auto px-6 py-3 bg-blue-600 text-white hover:bg-blue-700 transition-colors font-medium"
         >
           📥 Télécharger
         </button>
       </div>
-
-      {/* Editor */}
-      <div className="flex-1">
-        <Editor
-          height="100%"
-          language={activeTab}
-          value={activeTab === 'html' ? htmlCode : cssCode}
-          theme="vs-dark"
-          options={{
-            readOnly: false,
-            minimap: { enabled: true },
-            fontSize: 14,
-            lineNumbers: 'on',
-            scrollBeyondLastLine: false,
-            automaticLayout: true,
-            wordWrap: 'on',
-          }}
-        />
+      <div className="flex-1 flex">
+        <div className="w-1/2 h-full border-r border-gray-700">
+          <Editor
+            height="100%"
+            language={activeTab}
+            value={activeTab === 'html' ? htmlCode : cssCode}
+            onChange={handleEditorChange}
+            theme="vs-dark"
+            options={{
+              readOnly: false,
+              minimap: { enabled: true },
+              fontSize: 14,
+              lineNumbers: 'on',
+              scrollBeyondLastLine: false,
+              automaticLayout: true,
+              wordWrap: 'on',
+            }}
+          />
+        </div>
+        <div className="w-1/2 h-full">
+          <iframe
+            srcDoc={previewHtml}
+            className="w-full h-full border-0"
+            title="Preview"
+          />
+        </div>
       </div>
     </div>
   );

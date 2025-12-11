@@ -4,15 +4,40 @@ import { useStore } from '../../store/useStore';
 import { generateHTML, generateCSS, generateCompleteHTML } from '../../utils/codeGenerator';
 
 export const CodeEditor: React.FC = () => {
-  const { elements } = useStore();
+  const { elements, selectedElementId, updateElement } = useStore();
   const [activeTab, setActiveTab] = useState<'html' | 'css'>('html');
   const [htmlCode, setHtmlCode] = useState('');
   const [cssCode, setCssCode] = useState('');
 
+  // Charger le contenu de l'élément sélectionné
   useEffect(() => {
-    setHtmlCode(generateHTML(elements));
-    setCssCode(generateCSS(elements));
-  }, [elements]);
+    const selectedElement = elements.find(el => el.id === selectedElementId);
+    if (selectedElement) {
+      setHtmlCode(selectedElement.content || '');
+      setCssCode(selectedElement.styles?.toString() || '');
+    } else {
+      setHtmlCode('');
+      setCssCode('');
+    }
+  }, [selectedElementId, elements]);
+
+  // Mettre à jour l'élément sélectionné quand le code change
+  const handleEditorChange = (value: string | undefined) => {
+    if (!value || !selectedElementId) return;
+    if (activeTab === 'html') {
+      updateElement(selectedElementId, { content: value });
+    } else if (activeTab === 'css') {
+      // Parsing basique pour convertir le CSS en objet de style
+      const styles: Record<string, string> = {};
+      value.split(';').forEach(declaration => {
+        const [property, val] = declaration.split(':').map(s => s.trim());
+        if (property && val) {
+          styles[property] = val;
+        }
+      });
+      updateElement(selectedElementId, { styles });
+    }
+  };
 
   const handleDownload = () => {
     const completeHTML = generateCompleteHTML(elements);
@@ -22,36 +47,11 @@ export const CodeEditor: React.FC = () => {
     htmlLink.href = htmlUrl;
     htmlLink.download = 'index.html';
     htmlLink.click();
-
-    const cssBlob = new Blob([cssCode], { type: 'text/css' });
-    const cssUrl = URL.createObjectURL(cssBlob);
-    const cssLink = document.createElement('a');
-    cssLink.href = cssUrl;
-    cssLink.download = 'styles.css';
-    cssLink.click();
-
-    setTimeout(() => {
-      URL.revokeObjectURL(htmlUrl);
-      URL.revokeObjectURL(cssUrl);
-    }, 100);
-  };
-
-  // Fonction pour ouvrir l'aperçu dans une nouvelle fenêtre
-  const handlePreview = () => {
-    const completeHTML = generateCompleteHTML(elements);
-    const previewWindow = window.open('', '_blank');
-    if (previewWindow) {
-      previewWindow.document.open();
-      previewWindow.document.write(completeHTML);
-      previewWindow.document.close();
-    } else {
-      alert("La fenêtre d'aperçu n'a pas pu s'ouvrir. Vérifiez les bloqueurs de pop-up.");
-    }
+    setTimeout(() => URL.revokeObjectURL(htmlUrl), 100);
   };
 
   return (
     <div className="h-full bg-gray-900 flex flex-col">
-      {/* Tabs */}
       <div className="flex bg-gray-800 border-b border-gray-700">
         <button
           onClick={() => setActiveTab('html')}
@@ -74,26 +74,18 @@ export const CodeEditor: React.FC = () => {
           CSS
         </button>
         <button
-          onClick={handlePreview}
-          className="px-6 py-3 bg-purple-600 text-white hover:bg-purple-700 transition-colors font-medium mr-2"
-          title="Aperçu dans une nouvelle fenêtre"
-        >
-          👁️ Aperçu
-        </button>
-        <button
           onClick={handleDownload}
-          className="px-6 py-3 bg-blue-600 text-white hover:bg-blue-700 transition-colors font-medium"
+          className="ml-auto px-6 py-3 bg-blue-600 text-white hover:bg-blue-700 transition-colors font-medium"
         >
           📥 Télécharger
         </button>
       </div>
-
-      {/* Editor */}
       <div className="flex-1">
         <Editor
           height="100%"
           language={activeTab}
           value={activeTab === 'html' ? htmlCode : cssCode}
+          onChange={handleEditorChange}
           theme="vs-dark"
           options={{
             readOnly: false,

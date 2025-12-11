@@ -10,11 +10,14 @@ export const CodeEditor: React.FC = () => {
   const [cssCode, setCssCode] = useState('');
 
   useEffect(() => {
+    // HTML pur sans CSS
     setHtmlCode(generateHTML(elements));
+    // CSS pur
     setCssCode(generateCSS(elements));
   }, [elements]);
 
   const handleDownload = () => {
+    // Télécharger HTML complet avec CSS intégré
     const completeHTML = generateCompleteHTML(elements);
     const htmlBlob = new Blob([completeHTML], { type: 'text/html' });
     const htmlUrl = URL.createObjectURL(htmlBlob);
@@ -23,6 +26,7 @@ export const CodeEditor: React.FC = () => {
     htmlLink.download = 'index.html';
     htmlLink.click();
 
+    // Télécharger CSS séparé
     const cssBlob = new Blob([cssCode], { type: 'text/css' });
     const cssUrl = URL.createObjectURL(cssBlob);
     const cssLink = document.createElement('a');
@@ -30,23 +34,11 @@ export const CodeEditor: React.FC = () => {
     cssLink.download = 'styles.css';
     cssLink.click();
 
+    // Nettoyer
     setTimeout(() => {
       URL.revokeObjectURL(htmlUrl);
       URL.revokeObjectURL(cssUrl);
     }, 100);
-  };
-
-  // Fonction pour ouvrir l'aperçu dans une nouvelle fenêtre
-  const handlePreview = () => {
-    const completeHTML = generateCompleteHTML(elements);
-    const previewWindow = window.open('', '_blank');
-    if (previewWindow) {
-      previewWindow.document.open();
-      previewWindow.document.write(completeHTML);
-      previewWindow.document.close();
-    } else {
-      alert("La fenêtre d'aperçu n'a pas pu s'ouvrir. Vérifiez les bloqueurs de pop-up.");
-    }
   };
 
   return (
@@ -56,8 +48,8 @@ export const CodeEditor: React.FC = () => {
         <button
           onClick={() => setActiveTab('html')}
           className={`px-6 py-3 font-medium transition-colors ${
-            activeTab === 'html'
-              ? 'bg-gray-900 text-white border-b-2 border-blue-500'
+            activeTab === 'html' 
+              ? 'bg-gray-900 text-white border-b-2 border-blue-500' 
               : 'text-gray-400 hover:text-white'
           }`}
         >
@@ -66,23 +58,16 @@ export const CodeEditor: React.FC = () => {
         <button
           onClick={() => setActiveTab('css')}
           className={`px-6 py-3 font-medium transition-colors ${
-            activeTab === 'css'
-              ? 'bg-gray-900 text-white border-b-2 border-blue-500'
+            activeTab === 'css' 
+              ? 'bg-gray-900 text-white border-b-2 border-blue-500' 
               : 'text-gray-400 hover:text-white'
           }`}
         >
           CSS
         </button>
         <button
-          onClick={handlePreview}
-          className="px-6 py-3 bg-purple-600 text-white hover:bg-purple-700 transition-colors font-medium mr-2"
-          title="Aperçu dans une nouvelle fenêtre"
-        >
-          👁️ Aperçu
-        </button>
-        <button
           onClick={handleDownload}
-          className="px-6 py-3 bg-blue-600 text-white hover:bg-blue-700 transition-colors font-medium"
+          className="ml-auto px-6 py-3 bg-blue-600 text-white hover:bg-blue-700 transition-colors font-medium"
         >
           📥 Télécharger
         </button>

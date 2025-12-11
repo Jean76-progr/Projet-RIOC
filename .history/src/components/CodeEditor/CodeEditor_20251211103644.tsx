@@ -5,7 +5,7 @@ import { generateHTML, generateCSS } from '../../utils/codeGenerator';
 import { Code, Palette, Copy, Check } from 'lucide-react';
 
 export const CodeEditor: React.FC = () => {
-  const { elements, updateElement, addElement, deleteElement } = useStore();
+  const { elements, updateElement } = useStore();
   const [activeTab, setActiveTab] = useState<'html' | 'css'>('html');
   const [htmlCode, setHtmlCode] = useState('');
   const [cssCode, setCssCode] = useState('');
@@ -19,7 +19,7 @@ export const CodeEditor: React.FC = () => {
     setCssCode(css);
   }, [elements]);
 
-  // Fonction pour générer uniquement le HTML (sans CSS inline)
+  // ✅ Fonction pour générer uniquement le HTML (sans CSS inline)
   const generatePureHTML = (elements: any[]) => {
     if (elements.length === 0) {
       return '<!-- Ajoutez des composants au canvas pour voir le code HTML -->';
@@ -64,102 +64,93 @@ export const CodeEditor: React.FC = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Gestion de la modification du code HTML
-  const handleHTMLChange = (value: string | undefined) => {
-    if (!value) return;
-    setHtmlCode(value);
-    
-    // TODO: Parser le HTML et mettre à jour les éléments
-    // Pour l'instant, on laisse juste l'édition sans sync inverse
-    console.log('HTML modifié:', value);
-  };
-
-  // Gestion de la modification du code CSS
+  // ✅ Gestion de la modification du code CSS avec synchronisation en temps réel
   const handleCSSChange = (value: string | undefined) => {
     if (!value) return;
     setCssCode(value);
     
-    // Parser le CSS et mettre à jour les styles des éléments
-    try {
-      parseAndApplyCSS(value);
-    } catch (error) {
-      console.error('Erreur lors du parsing CSS:', error);
-    }
+    // Parser et appliquer immédiatement les changements
+    parseAndApplyCSS(value);
   };
 
-  // Parser le CSS et appliquer aux éléments
+  // ✅ Parser le CSS et mettre à jour les éléments en temps réel
   const parseAndApplyCSS = (css: string) => {
-    // Extraire les règles CSS pour chaque élément
-    const regex = /\.element-([a-f0-9\-]+)\s*{([^}]+)}/g;
-    let match;
+    try {
+      // Regex pour capturer les règles CSS de chaque élément
+      const regex = /\.element-([a-f0-9\-]+)\s*\{([^}]+)\}/g;
+      let match;
 
-    while ((match = regex.exec(css)) !== null) {
-      const elementId = match[1];
-      const cssRules = match[2];
-      
-      // Parser les propriétés CSS
-      const styles: any = {};
-      const properties = cssRules.split(';').filter(p => p.trim());
-      
-      properties.forEach(prop => {
-        const [key, value] = prop.split(':').map(s => s.trim());
-        if (key && value) {
-          // Convertir les propriétés CSS en camelCase
-          const camelKey = key.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
-          styles[camelKey] = value;
-        }
+      const updates: { [key: string]: any } = {};
+
+      while ((match = regex.exec(css)) !== null) {
+        const elementId = match[1];
+        const cssRules = match[2];
+        
+        // Trouver l'élément correspondant
+        const element = elements.find(e => e.id === elementId);
+        if (!element) continue;
+
+        // Parser les propriétés CSS
+        const properties = cssRules.split(';').filter(p => p.trim());
+        
+        let position = { ...element.position };
+        let size = { ...element.size };
+        const styles: any = {};
+        
+        properties.forEach(prop => {
+          const [key, value] = prop.split(':').map(s => s.trim());
+          if (!key || !value) return;
+
+          // Gérer les propriétés de position et taille
+          switch (key) {
+            case 'left':
+              const leftValue = parseInt(value);
+              if (!isNaN(leftValue)) {
+                position.x = leftValue;
+              }
+              break;
+            case 'top':
+              const topValue = parseInt(value);
+              if (!isNaN(topValue)) {
+                position.y = topValue;
+              }
+              break;
+            case 'width':
+              const widthValue = parseInt(value);
+              if (!isNaN(widthValue)) {
+                size.width = widthValue;
+              }
+              break;
+            case 'height':
+              const heightValue = parseInt(value);
+              if (!isNaN(heightValue)) {
+                size.height = heightValue;
+              }
+              break;
+            default:
+              // Autres styles CSS (couleur, font, etc.)
+              if (key !== 'position') {
+                const camelKey = key.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+                styles[camelKey] = value;
+              }
+          }
+        });
+
+        // Préparer les mises à jour
+        updates[elementId] = {
+          position,
+          size,
+          styles
+        };
+      }
+
+      // ✅ Appliquer toutes les mises à jour en une seule fois
+      Object.entries(updates).forEach(([elementId, update]) => {
+        updateElement(elementId, update);
       });
 
-      // Extraire position et taille si présentes
-      let updates: any = {};
-      
-      if (styles.left) {
-        const x = parseInt(styles.left);
-        if (!isNaN(x)) {
-          updates.position = { ...elements.find(e => e.id === elementId)?.position, x };
-        }
-        delete styles.left;
-      }
-      
-      if (styles.top) {
-        const y = parseInt(styles.top);
-        if (!isNaN(y)) {
-          updates.position = { 
-            ...elements.find(e => e.id === elementId)?.position, 
-            ...updates.position,
-            y 
-          };
-        }
-        delete styles.top;
-      }
-      
-      if (styles.width) {
-        const width = parseInt(styles.width);
-        if (!isNaN(width)) {
-          updates.size = { ...elements.find(e => e.id === elementId)?.size, width };
-        }
-        delete styles.width;
-      }
-      
-      if (styles.height) {
-        const height = parseInt(styles.height);
-        if (!isNaN(height)) {
-          updates.size = { 
-            ...elements.find(e => e.id === elementId)?.size,
-            ...updates.size,
-            height 
-          };
-        }
-        delete styles.height;
-      }
-
-      // Retirer position qui n'est pas un style visuel
-      delete styles.position;
-
-      // Mettre à jour l'élément
-      if (Object.keys(updates).length > 0 || Object.keys(styles).length > 0) {
-        updateElement(elementId, { ...updates, styles });
-      }
+    } catch (error) {
+      console.error('Erreur lors du parsing CSS:', error);
     }
   };
 
@@ -218,16 +209,27 @@ export const CodeEditor: React.FC = () => {
         </button>
       </div>
 
+      {/* Info bar pour le CSS */}
+      {activeTab === 'css' && (
+        <div 
+          className="px-4 py-2 text-xs flex items-center gap-2"
+          style={{ backgroundColor: '#1a1a1a', color: '#4ec9b0', borderBottom: '1px solid #3e3e42' }}
+        >
+          <span>💡</span>
+          <span>Les modifications CSS se reflètent en temps réel sur le canvas</span>
+        </div>
+      )}
+
       {/* Editor */}
       <div className="flex-1">
         <Editor
           height="100%"
           language={activeTab}
           value={activeTab === 'html' ? htmlCode : cssCode}
-          onChange={activeTab === 'html' ? handleHTMLChange : handleCSSChange}
+          onChange={activeTab === 'css' ? handleCSSChange : undefined}
           theme="vs-dark"
           options={{
-            readOnly: false,
+            readOnly: activeTab === 'html', // ✅ HTML en lecture seule, CSS éditable
             minimap: { enabled: true },
             fontSize: 14,
             lineNumbers: 'on',
@@ -237,6 +239,11 @@ export const CodeEditor: React.FC = () => {
             tabSize: 2,
             formatOnPaste: true,
             formatOnType: true,
+            quickSuggestions: activeTab === 'css',
+            suggest: {
+              showProperties: activeTab === 'css',
+              showColors: activeTab === 'css',
+            }
           }}
         />
       </div>
