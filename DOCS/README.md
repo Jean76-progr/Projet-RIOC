@@ -4,10 +4,10 @@ Ce dépôt contient le projet **RIOC**, un éditeur visuel web permettant de cr�
 
 ⚠️ **La documentation principale du projet se trouve ici :**
 
-👉 **[How-To-Guides.md](./How-To-Guides.md)**
+👉 **[How-To-Guides.md](main/How-To-Guides.md)**
 
 ---
 
 ## Documentation complémentaire
-- Présentation globale des projets : [`Docs/README.md`](./Docs/README.md)
-- Explications techniques et choix structurants : [`Docs/Explanation.md`](./Docs/Explanation.md)
+- Présentation globale des projets : [`Docs/README.md`](./DOCS/README.md)
+- Explications techniques et choix structurants : [`Docs/Explanation.md`](./DOCS/Explanation.md)
