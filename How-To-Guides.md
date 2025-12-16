@@ -9,9 +9,13 @@ Ce document explique comment installer, lancer et utiliser l'éditeur visuel RIO
 Assurez-vous d’avoir installé :
 - **Node.js ≥ 18**
 - **npm ≥ 9**
-- Un navigateur moderne (Chrome, Edge, Firefox)
+Si ce n'est pas le cas se rendre **https://nodejs.org** et télécharger la version LTS (Long Term Support).
+Après l’installation, redémarrer le terminal puis vérifier à nouveau :
+```bash
+node -vm -v
 
-Facultatif :
+Fa```
+cultatif :
 - VS Code (recommandé)
 - Extension React Developer Tools
 - Extension TailwindCSS IntelliSense
