@@ -24,7 +24,7 @@ git clone https://github.com/Jean76-progr/Projet-RIOC.git
 
 Accéder au dossier du projet React (Editeur Visuel) :
 ```bash
-cd Editeur-Visuel
+cd Projet-RIOC
 ```
 
 Installer les dépendances :
