@@ -11,11 +11,12 @@ Assurez-vous d’avoir installé :
 - **npm ≥ 9**
 Si ce n'est pas le cas se rendre **https://nodejs.org** et télécharger la version LTS (Long Term Support).
 Après l’installation, redémarrer le terminal puis vérifier à nouveau :
-```bash
-node -vm -v
 
-Fa```
-cultatif :
+```bash
+node -v
+npm -v
+```
+Facultatif :
 - VS Code (recommandé)
 - Extension React Developer Tools
 - Extension TailwindCSS IntelliSense
