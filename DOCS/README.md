@@ -4,7 +4,7 @@ Ce dépôt contient le projet **RIOC**, un éditeur visuel web permettant de cr�
 
 ⚠️ **La documentation principale du projet se trouve ici :**
 
-👉 **[How-To-Guides.md](main/How-To-Guides.md)**
+👉 **[How-To-Guides.md](../How-To-Guides.md)**
 
 ---
 
