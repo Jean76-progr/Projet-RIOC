@@ -129,9 +129,3 @@ Chrome → Outils Dev → Application → IndexedDB → Delete
 - Vite.js : [https://vitejs.dev/](https://vitejs.dev/)
 
 ---
-Si vous souhaitez, je peux aussi générer :
-- Un **README.md complet**,
-- Un **Explanation.md argumenté**,
-- Un **schéma UML de l'architecture**,
-- Une **présentation orale pour jury pour les 3 membres**,
-- La **roadmap en MD prête à intégrer**.
