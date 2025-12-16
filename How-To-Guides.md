@@ -9,6 +9,7 @@ Ce document explique comment installer, lancer et utiliser l'éditeur visuel RIO
 Assurez-vous d’avoir installé :
 - **Node.js ≥ 18**
 - **npm ≥ 9**
+
 Si ce n'est pas le cas se rendre **https://nodejs.org** et télécharger la version LTS (Long Term Support).
 Après l’installation, redémarrer le terminal puis vérifier à nouveau :
 
