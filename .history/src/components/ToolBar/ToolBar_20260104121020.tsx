@@ -137,7 +137,7 @@ export const Toolbar: React.FC = () => {
 
         {/* Info nombre d'éléments */}
         <div className="ml-auto flex items-center gap-2 text-sm text-gray-600">
-          <span className="font-medium">{elements.length} </span>
+          <span className="font-medium">{elements.length}</span>
           <span>élément{elements.length > 1 ? 's' : ''}</span>
         </div>
       </div>

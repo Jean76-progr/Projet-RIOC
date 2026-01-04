@@ -129,7 +129,7 @@ export const ProjectManager: React.FC<Props> = ({ onClose }) => {
       onClose();
       
       // Notification de succès
-      alert('Projet chargé !');
+      alert('✅ Projet chargé !');
     }
   };
 
