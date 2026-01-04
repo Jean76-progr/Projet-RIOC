@@ -10,4 +10,4 @@ Ce dépôt contient le projet **Editeur Visuel**, un éditeur visuel web permett
 
 ## Documentation complémentaire
 - Présentation globale des projets : [`README.md`](../DOCS/README.md)
-- Explications techniques et choix structurants : [`Explanation.md`](../DOCS/Explanation.md)
+- Explications techniques et choix structurants : [`EXPLANATION.md`](../DOCS/EXPLANATION.md)
