@@ -132,11 +132,11 @@ export const Canvas: React.FC = () => {
           }
         });
 
-        console.log('Widget ajouté au canvas');
+        console.log('✅ Widget ajouté au canvas');
         
       } catch (error) {
         console.error('Erreur lors du drop du widget:', error);
-        alert('Erreur lors de l\'ajout du widget');
+        alert('❌ Erreur lors de l\'ajout du widget');
       }
     }
   };

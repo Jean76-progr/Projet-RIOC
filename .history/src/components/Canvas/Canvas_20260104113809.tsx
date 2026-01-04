@@ -19,12 +19,11 @@ export const Canvas: React.FC = () => {
     const rect = canvasRef.current.getBoundingClientRect();
 
     if (isBuiltIn) {
-      // ✅ Composant built-in
       const componentType = e.dataTransfer.getData('componentType') as ElementType;
       let rawSize = e.dataTransfer.getData('defaultSize');
 
       if (!rawSize) {
-        console.warn("⚠️ Aucun defaultSize trouvé, utilisation de valeurs par défaut.");
+        console.warn("Aucun defaultSize trouvé, utilisation de valeurs par défaut.");
         rawSize = JSON.stringify({ width: 300, height: 200 }); // fallback par défaut
       }
 
@@ -48,7 +47,6 @@ export const Canvas: React.FC = () => {
         attributes: getDefaultAttributes(componentType)
       });
     } else {
-      // ✅ Widget personnalisé
       const widgetId = e.dataTransfer.getData('widgetId');
       console.log('Drop widget ID:', widgetId);
       
@@ -58,15 +56,15 @@ export const Canvas: React.FC = () => {
         
         if (!widget) {
           console.error('Widget non trouvé dans la base de données');
-          alert('❌ Widget introuvable');
+          alert('Widget introuvable');
           return;
         }
 
         let rawSize = e.dataTransfer.getData('defaultSize');
 
         if (!rawSize) {
-          console.warn("⚠️ Aucun defaultSize trouvé, utilisation de valeurs par défaut.");
-          rawSize = JSON.stringify({ width: 300, height: 200 }); // fallback par défaut
+          console.warn("Aucun defaultSize trouvé, utilisation de valeurs par défaut.");
+          rawSize = JSON.stringify({ width: 300, height: 200 });
         }
 
         const defaultSize = JSON.parse(rawSize);
@@ -80,7 +78,6 @@ export const Canvas: React.FC = () => {
         x = Math.max(0, snapped.x);
         y = Math.max(0, snapped.y);
 
-        // ✅ Ajouter le widget comme élément personnalisé
         addElement({
           type: 'div' as ElementType,
           position: { x, y },
@@ -94,10 +91,10 @@ export const Canvas: React.FC = () => {
           }
         });
 
-        console.log('✅ Widget ajouté au canvas');
+        console.log('Widget ajouté au canvas');
       } catch (error) {
         console.error('Erreur lors du drop du widget:', error);
-        alert('❌ Erreur lors de l\'ajout du widget');
+        alert('Erreur lors de l\'ajout du widget');
       }
     }
   };

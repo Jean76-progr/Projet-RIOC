@@ -203,7 +203,7 @@ export const DraggableElement: React.FC<Props> = ({ element }) => {
         <div
           className={commonClasses}
           // dangerouslySetInnerHTML : Injecte du HTML brut (nécessaire pour les widgets)
-          // ATTENTION : Peut être dangereux si le HTML n'est pas fiable
+          // ⚠️ ATTENTION : Peut être dangereux si le HTML n'est pas fiable
           dangerouslySetInnerHTML={{ __html: element.content }}
         />
       );
