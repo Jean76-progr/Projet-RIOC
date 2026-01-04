@@ -1,5 +1,5 @@
-# How-To-Guides – Projet Editeur Visuel RIOC
-Ce document explique comment installer, lancer et utiliser l'éditeur visuel RIOC, ainsi que les liens techniques utiles pour contribuer au projet.
+# How-To-Guides – Projet Editeur Visuel
+Ce document explique comment installer, lancer et utiliser l'éditeur visuel, ainsi que les liens techniques utiles pour contribuer au projet.
 
 ---
 
