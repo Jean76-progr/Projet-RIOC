@@ -1,6 +1,6 @@
-# Explanation – Projet Editeur-Visuel (RIOC)
+# Explanation – Projet Editeur-Visuel
 
-Ce document présente les éléments explicatifs et contextuels qui influencent le projet **Editeur-Visuel (RIOC – Responsive Interface Online Creator)**, sans faire partie directement du code source.  
+Ce document présente les éléments explicatifs et contextuels qui influencent le projet **Editeur-Visue**, sans faire partie directement du code source.  
 Il vise à justifier les choix techniques, organisationnels et conceptuels réalisés au cours du développement.
 
 ---
@@ -165,7 +165,7 @@ Le projet a été conçu pour permettre des évolutions futures :
 
 ## 10. Conclusion
 
-Le projet **Editeur-Visuel (RIOC)** repose sur des choix techniques et conceptuels cohérents avec ses objectifs :
+Le projet **Editeur-Visuel** repose sur des choix techniques et conceptuels cohérents avec ses objectifs :
 - simplicité d’utilisation,
 - robustesse technique,
 - lisibilité du code généré,
