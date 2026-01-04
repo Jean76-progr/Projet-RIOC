@@ -6,6 +6,10 @@ Ce dépôt contient le projet **Editeur Visuel**, un éditeur visuel web permett
 
 👉 **[How-To-Guides.md](../How-To-Guides.md)**
 
+⚠️ **Si vous souhaitez reprendre le projet :**
+
+👉 **[Reprise du Projet.md](../DOCS/Reprise_du_Projet.md)**
+
 ---
 
 ## Documentation complémentaire
