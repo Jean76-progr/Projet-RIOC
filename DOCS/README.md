@@ -1,6 +1,6 @@
-# Projet RIOC – Responsive Interface Online Creator
+# Projet RIOC – Editeur Visuel
 
-Ce dépôt contient le projet **RIOC**, un éditeur visuel web permettant de créer des interfaces HTML/CSS via un système de glisser-déposer.
+Ce dépôt contient le projet **Editeur Visuel**, un éditeur visuel web permettant de créer des interfaces HTML/CSS via un système de glisser-déposer.
 
 ⚠️ **La documentation principale du projet se trouve ici :**
 
