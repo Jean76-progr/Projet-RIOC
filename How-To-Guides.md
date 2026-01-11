@@ -25,7 +25,7 @@ Facultatif :
 ## 1.2. Installation du projet
 Cloner le dépôt :
 ```bash
-git clone https://github.com/Jean76-progr/Projet-RIOC.git
+git clone [Chemin du projet/Projet-RIOC.git]
 ```
 
 Accéder au dossier du projet React (Editeur Visuel) :
